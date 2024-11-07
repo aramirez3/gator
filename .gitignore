@@ -26,5 +26,3 @@ go.work.sum
 
 # compiled file
 gator
-
-.gatorconfig.json

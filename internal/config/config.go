@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 )
@@ -17,75 +16,58 @@ type Config struct {
 	CurrentUserName string `json:"current_user_name"`
 }
 
-func getConfigFile(readWriteMode bool) (*os.File, error) {
-	// must call Close() where consuming the returned file
+func getConfigFilepath() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return nil, fmt.Errorf("error getting home directory: %w", err)
+		return "", fmt.Errorf("error getting home directory: %w", err)
 	}
-
-	filePath := filepath.Join(homeDir, configFileName)
-	if readWriteMode {
-		configFile, err := os.OpenFile(filePath, os.O_RDWR, 0644)
-		if err != nil {
-			return nil, fmt.Errorf("error opening config file: %w", err)
-		}
-
-		return configFile, nil
-	} else {
-		configFile, err := os.Open(filePath)
-		if err != nil {
-			return nil, fmt.Errorf("error opening config file: %w", err)
-		}
-
-		return configFile, nil
-	}
+	return filepath.Join(homeDir, configFileName), nil
 }
 
 func Read() (Config, error) {
 	config := Config{}
-	configFile, err := getConfigFile(false)
-
+	filePath, err := getConfigFilepath()
 	if err != nil {
-		return config, fmt.Errorf("error getting config file: %w", err)
+		return config, err
 	}
 
+	configFile, err := os.Open(filePath)
+	if err != nil {
+		return config, err
+	}
 	defer configFile.Close()
 
-	byteData, err := io.ReadAll(configFile)
+	decoder := json.NewDecoder(configFile)
+	err = decoder.Decode(&config)
 	if err != nil {
-		return config, fmt.Errorf("error reading config file: %w", err)
+		return config, err
 	}
-
-	json.Unmarshal(byteData, &config)
-	fmt.Println("Config file:")
-	fmt.Printf("    db_url: %s\n", config.DBUrl)
-	fmt.Printf("    current_user_name: %s\n", config.CurrentUserName)
 	return config, nil
 }
 
-func SetUser(userName string) error {
-	cfg, err := Read()
-	if err != nil {
-		return fmt.Errorf("error reading config file: %w", err)
-	}
-	cfg.CurrentUserName = userName
+func (c *Config) SetUser(userName string) error {
+	c.CurrentUserName = userName
 
-	write(cfg)
+	write(*c)
 	return nil
 }
 
 func write(cfg Config) error {
-	configFile, err := getConfigFile(true)
+	filePath, err := getConfigFilepath()
 	if err != nil {
-		return fmt.Errorf("error getting config file: %w", err)
+		return err
 	}
-	defer configFile.Close()
 
-	encoder := json.NewEncoder(configFile)
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
 	err = encoder.Encode(cfg)
 	if err != nil {
-		return fmt.Errorf("error encoding json file: %w", err)
+		return err
 	}
 	return nil
 }

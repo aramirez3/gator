@@ -1,6 +1,6 @@
--- name: CreateFeed :one
+-- name: CreateFeeds :one
 
-INSERT INTO feed (
+INSERT INTO feeds (
     id,
     created_at,
     updated_at,
@@ -19,8 +19,11 @@ INSERT INTO feed (
 
 -- name: GetFeed :one
 
-SELECT * from feed
+SELECT * from feeds
 WHERE name = $1;
 
 -- name: DeleteAllFeeds :exec
-DELETE FROM feed;
+DELETE FROM feeds;
+
+-- name: GetFeeds :many
+SELECT * from feeds;

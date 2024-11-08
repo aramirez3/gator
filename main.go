@@ -40,6 +40,7 @@ func main() {
 	cmds.register("reset", handlerReset)
 	cmds.register("users", handlerUsers)
 	cmds.register("agg", handlerAgg)
+	cmds.register("addfeed", handlerAddfeed)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")

@@ -21,3 +21,6 @@ INSERT INTO feed (
 
 SELECT * from feed
 WHERE name = $1;
+
+-- name: DeleteAllFeeds :exec
+DELETE FROM feed;

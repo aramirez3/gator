@@ -11,7 +11,6 @@ import (
 )
 
 func handlerRegister(s *state, cmd command) error {
-	fmt.Println("check args")
 	if len(cmd.arguments) != 1 {
 		return fmt.Errorf("register requires a name")
 	}
@@ -19,12 +18,9 @@ func handlerRegister(s *state, cmd command) error {
 
 	ctx := context.Background()
 
-	fmt.Println("check for existing user")
-
 	existingUser, _ := s.db.GetUser(ctx, user)
 
 	if existingUser.ID != uuid.Nil {
-		fmt.Println("user exists")
 		os.Exit(1)
 	}
 
@@ -35,14 +31,10 @@ func handlerRegister(s *state, cmd command) error {
 		UpdatedAt: time.Now(),
 	}
 
-	fmt.Println("create new user")
-
 	dbUser, err := s.db.CreateUser(ctx, params)
 	if err != nil {
 		return fmt.Errorf("error creating user: %w", err)
 	}
-
-	fmt.Println("set cofig.current user")
 
 	s.config.SetUser(dbUser.Name)
 

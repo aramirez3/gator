@@ -1,4 +1,4 @@
--- name: CreateFeeds :one
+-- name: CreateFeed :one
 
 INSERT INTO feeds (
     id,

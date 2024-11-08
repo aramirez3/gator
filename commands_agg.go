@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 )
@@ -24,14 +25,16 @@ type RSSItem struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-func handlerAggs(s *state, cmd command) error {
+func handlerAgg(s *state, cmd command) error {
+	var feedUrl string
 	if len(cmd.arguments) != 1 {
-		return fmt.Errorf("register requires a name")
+		feedUrl = "https://www.wagslane.dev/index.xml"
+	} else {
+		feedUrl = cmd.arguments[0]
 	}
 
-	feedURL := cmd.arguments[0]
 	ctx := context.Background()
-	rssFeed, err := fetchFeed(ctx, feedURL)
+	rssFeed, err := fetchFeed(ctx, feedUrl)
 	if err != nil {
 		return err
 	}
@@ -64,5 +67,15 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 		return &feed, err
 	}
 
+	unescapeFeed(&feed)
+
 	return &feed, err
+}
+
+func unescapeFeed(rssFeed *RSSFeed) *RSSFeed {
+	title := html.UnescapeString(rssFeed.Channel.Title)
+	description := html.UnescapeString(rssFeed.Channel.Description)
+	rssFeed.Channel.Title = title
+	rssFeed.Channel.Description = description
+	return rssFeed
 }

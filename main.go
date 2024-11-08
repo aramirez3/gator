@@ -1,11 +1,14 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/aramirez3/gator/internal/config"
+	"github.com/aramirez3/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -17,14 +20,19 @@ func main() {
 		os.Exit(1)
 	}
 
+	db, err := sql.Open("postgres", config.DBUrl)
+	dbQueries := database.New(db)
+
 	appState := state{
 		config: &config,
+		db:     dbQueries,
 	}
 
 	cmds := commands{
 		commands: make(map[string]commandHandler),
 	}
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")

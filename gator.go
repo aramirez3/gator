@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/aramirez3/gator/internal/config"
+	"github.com/aramirez3/gator/internal/database"
 )
 
 type state struct {
 	config *config.Config
+	db     *database.Queries
 }
 
 type command struct {
@@ -20,16 +22,6 @@ type commands struct {
 }
 
 type commandHandler func(*state, command) error
-
-func handlerLogin(s *state, cmd command) error {
-	if len(cmd.arguments) != 1 {
-		return fmt.Errorf("login requires a username")
-	}
-	name := cmd.arguments[0]
-	s.config.SetUser(name)
-	fmt.Printf("Username has been set to: %s\n", name)
-	return nil
-}
 
 func (c *commands) register(name string, f commandHandler) {
 	_, ok := c.commands[name]

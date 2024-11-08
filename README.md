@@ -9,20 +9,14 @@ Add `~/.gatorconfig.json` to your home directory and populate with db config set
   "current_user_name": "username_goes_here"
 }
 ```
-## Run and Build
-From project root, run:
+## Install
+From project root:
 ```bash
-go build && ./gator
-```
-
-## Build
-From project root, run:
-```bash
-go build
+go install
 ```
 
 ## Run
-From project roo, run:
+From project root:
 ```bash
-./gator
+gator <command> [args...]
 ```

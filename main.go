@@ -21,6 +21,10 @@ func main() {
 	}
 
 	db, err := sql.Open("postgres", config.DBUrl)
+	if err != nil {
+		fmt.Printf("could not connect to database: %v\n", err)
+		os.Exit(1)
+	}
 	dbQueries := database.New(db)
 
 	appState := state{
@@ -33,6 +37,7 @@ func main() {
 	}
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")

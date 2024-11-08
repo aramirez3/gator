@@ -19,11 +19,15 @@ INSERT INTO feeds (
 
 -- name: GetFeed :one
 
-SELECT * from feeds
+SELECT * FROM feeds
 WHERE name = $1;
 
 -- name: DeleteAllFeeds :exec
 DELETE FROM feeds;
 
 -- name: GetFeeds :many
-SELECT * from feeds;
+SELECT *, u.name as username
+FROM
+    feeds f
+LEFT JOIN
+    users u ON f.user_id = u.id;

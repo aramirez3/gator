@@ -20,5 +20,10 @@ func handlerReset(s *state, cmd command) error {
 	}
 	fmt.Println("feed table is reset.")
 
+	err = s.db.DeleteAllFeedFollows(ctx)
+	if err != nil {
+		return fmt.Errorf("error deleting from feed_follows table: %w", err)
+	}
+
 	return nil
 }

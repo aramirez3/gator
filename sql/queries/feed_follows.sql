@@ -1,24 +1,35 @@
 -- name: CreateFeedFollow :one
 
-INSERT INTO feed_follows (
-    id,
-    created_at,
-    updated_at,
-    user_id,
-    feed_id)
-    values (
-    $1,
-    $2,
-    $3,
-    $4,
-    $5
+WITH inserted_feed_follows AS (
+    INSERT INTO feed_follows (
+        id,
+        created_at,
+        updated_at,
+        user_id,
+        feed_id)
+    VALUES ( 
+        $1,
+        $2,
+        $3,
+        $4,
+        $5
+        )
+        RETURNING *
     )
-    RETURNING *;
+SELECT
+    inserted_feed_follows.*,
+    f.name as feed_name,
+    u.name as user_name
+FROM inserted_feed_follows
+INNER JOIN
+    users u on inserted_feed_follows.user_id = u.id
+INNER JOIN
+    feeds f on inserted_feed_follows.feed_id = f.id;
 
 -- name: GetFeedFollowsFowUser :one
 
 SELECT * FROM feed_follows
 WHERE user_id = $1;
 
--- name: DeleteAllFeedFollowss :exec
+-- name: DeleteAllFeedFollows :exec
 DELETE FROM feed_follows;

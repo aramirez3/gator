@@ -36,7 +36,7 @@ func handlerRegister(s *state, cmd command) error {
 		return fmt.Errorf("error creating user: %w", err)
 	}
 
-	s.config.SetUser(dbUser.Name)
+	s.config.SetUser(dbUser)
 
 	fmt.Println("User was created!")
 	fmt.Printf("    - ID: %v\n", dbUser.ID)

@@ -13,11 +13,15 @@ func handlerFeeds(s *state, cmd command) error {
 		return fmt.Errorf("error getting feeds from db: %w", err)
 	}
 
-	fmt.Println("Feeds:")
-	for _, feed := range feeds {
-		fmt.Printf(" * %s\n", feed.Name)
-		fmt.Printf("   - Url: %s\n", feed.Url)
-		fmt.Printf("   - User: %s\n", feed.Username.String)
+	if len(feeds) > 0 {
+		fmt.Println("Feeds:")
+		for _, feed := range feeds {
+			fmt.Printf(" * %s\n", feed.Name)
+			fmt.Printf("   - Url: %s\n", feed.Url)
+			fmt.Printf("   - User: %s\n", feed.Username.String)
+		}
+	} else {
+		fmt.Println("No feeds have been saved")
 	}
 	return nil
 }

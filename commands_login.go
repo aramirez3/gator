@@ -21,7 +21,7 @@ func handlerLogin(s *state, cmd command) error {
 		fmt.Println("user exists")
 		os.Exit(1)
 	}
-	s.config.SetUser(user.Name)
+	s.config.SetUser(user)
 	fmt.Printf("Username has been set to: %s\n", user.Name)
 	return nil
 }

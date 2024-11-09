@@ -20,7 +20,7 @@ INSERT INTO feeds (
 -- name: GetFeed :one
 
 SELECT * FROM feeds
-WHERE name = $1;
+WHERE url = $1;
 
 -- name: DeleteAllFeeds :exec
 DELETE FROM feeds;

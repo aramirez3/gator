@@ -18,7 +18,7 @@ type RSSFeed struct {
 		Title       string    `xml:"title"`
 		Link        string    `xml:"link"`
 		Description string    `xml:"description"`
-		Item        []RSSItem `xml:"item"`
+		Items       []RSSItem `xml:"item"`
 	} `xml:"channel"`
 }
 
@@ -33,12 +33,10 @@ func handlerAgg(s *state, cmd command) error {
 	if len(cmd.arguments) != 1 {
 		return fmt.Errorf("fetch requires a feedUrl")
 	}
-
-	rssFeed, err := fetchFeed(cmd.arguments[0])
+	err := scrapeFeeds(s)
 	if err != nil {
 		return err
 	}
-	fmt.Println(rssFeed)
 	return nil
 }
 
@@ -81,9 +79,28 @@ func unescapeFeed(rssFeed *RSSFeed) *RSSFeed {
 }
 
 func scrapeFeeds(s *state) error {
-	nextFeed, err := s.db.GetNextFeedToFetch(context.Background())
+	feed, err := getNextFeedToScrape(s)
 	if err != nil {
-		return fmt.Errorf("error getting feed: %w", err)
+		return err
+	}
+
+	rssFeed, err := fetchFeed(feed.Url)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Fetching items for %s\n", rssFeed.Channel.Title)
+	for _, item := range rssFeed.Channel.Items {
+		fmt.Println(item.Title)
+	}
+
+	return nil
+}
+
+func getNextFeedToScrape(s *state) (database.Feed, error) {
+	feed, err := s.db.GetNextFeedToFetch(context.Background())
+	if err != nil {
+		return database.Feed{}, fmt.Errorf("error getting feed: %w", err)
 	}
 
 	sqlTime := sql.NullTime{
@@ -92,12 +109,12 @@ func scrapeFeeds(s *state) error {
 	}
 
 	params := database.MarkFeedFetchedParams{
-		ID:            nextFeed.ID,
+		ID:            feed.ID,
 		LastFetchedAt: sqlTime,
 	}
 	err = s.db.MarkFeedFetched(context.Background(), params)
 	if err != nil {
-		return err
+		return database.Feed{}, err
 	}
-	return nil
+	return feed, nil
 }

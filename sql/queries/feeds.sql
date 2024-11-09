@@ -31,3 +31,13 @@ FROM
     feeds f
 LEFT JOIN
     users u ON f.user_id = u.id;
+
+-- name: MarkFeedFetched :exec
+UPDATE feeds
+    SET last_fetched_at = $2
+    WHERE id = $1;
+
+-- name: GetNextFeedToFetch :one
+SELECT * from feeds
+ORDER BY last_fetched_at DESC
+LIMIT 1;

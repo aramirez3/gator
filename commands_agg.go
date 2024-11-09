@@ -7,6 +7,7 @@ import (
 	"html"
 	"io"
 	"net/http"
+	"time"
 )
 
 type RSSFeed struct {
@@ -26,14 +27,11 @@ type RSSItem struct {
 }
 
 func handlerAgg(s *state, cmd command) error {
-	var feedUrl string
 	if len(cmd.arguments) != 1 {
-		feedUrl = "https://www.wagslane.dev/index.xml"
-	} else {
-		feedUrl = cmd.arguments[0]
+		return fmt.Errorf("fetch requires a feedUrl")
 	}
 
-	rssFeed, err := fetchFeed(context.Background(), feedUrl)
+	rssFeed, err := fetchFeed(cmd.arguments[0])
 	if err != nil {
 		return err
 	}
@@ -41,9 +39,9 @@ func handlerAgg(s *state, cmd command) error {
 	return nil
 }
 
-func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
+func fetchFeed(feedURL string) (*RSSFeed, error) {
 	feed := RSSFeed{}
-	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", feedURL, nil)
 
 	if err != nil {
 		return &feed, err
@@ -77,4 +75,12 @@ func unescapeFeed(rssFeed *RSSFeed) *RSSFeed {
 	rssFeed.Channel.Title = title
 	rssFeed.Channel.Description = description
 	return rssFeed
+}
+
+func scrapeFeeds(s *state, ttl time.Duration) error {
+	nextFeed, err := s.db.GetNextFeedToFetch(context.Background())
+	if err != nil {
+		return fmt.Errorf("error getting feed: %w", err)
+	}
+
 }

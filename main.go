@@ -44,6 +44,7 @@ func main() {
 	cmds.register("feeds", handlerFeeds)
 	cmds.register("follow", appState.middlewareLoggedIn(handlerFollow))
 	cmds.register("following", appState.middlewareLoggedIn(handlerFollowing))
+	cmds.register("unfollow", appState.middlewareLoggedIn(handlerUnfollow))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: gator <command> [args...]")

@@ -9,16 +9,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerAddfeed(s *state, cmd command) error {
+func handlerAddfeed(s *state, cmd command, user database.User) error {
 	fmt.Println("Add feed command")
 	if len(cmd.arguments) != 2 {
 		return fmt.Errorf("addfeed requires two arguments: name, url")
-	}
-
-	ctx := context.Background()
-	user, err := s.db.GetUser(ctx, s.config.CurrentUserName)
-	if err != nil {
-		return err
 	}
 
 	name := cmd.arguments[0]
@@ -33,7 +27,7 @@ func handlerAddfeed(s *state, cmd command) error {
 		UserID:    user.ID,
 	}
 
-	feed, err := s.db.CreateFeed(ctx, params)
+	feed, err := s.db.CreateFeed(context.Background(), params)
 
 	if err != nil {
 		return err
@@ -47,7 +41,7 @@ func handlerAddfeed(s *state, cmd command) error {
 	fmt.Printf("    - CreatedAt: %s\n", feed.CreatedAt.Format(time.RFC850))
 	fmt.Printf("    - UpdatedAt: %s\n", feed.UpdatedAt.Format(time.RFC850))
 
-	err = addFeedFollowRow(s, feed.ID)
+	err = addFeedFollowRow(s, user.ID, feed.ID)
 	if err != nil {
 		return err
 	}

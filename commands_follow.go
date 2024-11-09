@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 	if len(cmd.arguments) != 1 {
 		return fmt.Errorf("follow requires a feed url")
 	}
@@ -22,7 +22,7 @@ func handlerFollow(s *state, cmd command) error {
 		return err
 	}
 
-	err = addFeedFollowRow(s, feed.ID)
+	err = addFeedFollowRow(s, user.ID, feed.ID)
 	if err != nil {
 		return err
 	}
@@ -30,14 +30,14 @@ func handlerFollow(s *state, cmd command) error {
 	return nil
 }
 
-func addFeedFollowRow(s *state, feedId uuid.UUID) error {
+func addFeedFollowRow(s *state, userId uuid.UUID, feedId uuid.UUID) error {
 	ctx := context.Background()
 
 	params := database.CreateFeedFollowParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		UserID:    s.config.CurrentUserId,
+		UserID:    userId,
 		FeedID:    feedId,
 	}
 

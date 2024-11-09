@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+
+	"github.com/aramirez3/gator/internal/database"
 )
 
-func handlerFollowing(s *state, cmd command) error {
+func handlerFollowing(s *state, cmd command, user database.User) error {
 	ctx := context.Background()
-	feeds, err := s.db.GetFeedFollowsForUser(ctx, s.config.CurrentUserId)
+	feeds, err := s.db.GetFeedFollowsForUser(ctx, user.ID)
 
 	if err != nil {
 		return fmt.Errorf("error getting feeds from db: %w", err)

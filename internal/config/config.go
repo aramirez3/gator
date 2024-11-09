@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	"github.com/aramirez3/gator/internal/database"
-	"github.com/google/uuid"
 )
 
 const (
@@ -15,9 +14,8 @@ const (
 )
 
 type Config struct {
-	DBUrl           string    `json:"db_url"`
-	CurrentUserName string    `json:"current_user_name"`
-	CurrentUserId   uuid.UUID `json:"current_user_id"`
+	DBUrl           string `json:"db_url"`
+	CurrentUserName string `json:"current_user_name"`
 }
 
 func getConfigFilepath() (string, error) {
@@ -51,7 +49,6 @@ func Read() (Config, error) {
 
 func (c *Config) SetUser(user database.User) error {
 	c.CurrentUserName = user.Name
-	c.CurrentUserId = user.ID
 
 	write(*c)
 	return nil

@@ -8,8 +8,7 @@ import (
 )
 
 func handlerFollowing(s *state, cmd command, user database.User) error {
-	ctx := context.Background()
-	feeds, err := s.db.GetFeedFollowsForUser(ctx, user.ID)
+	feeds, err := s.db.GetFeedFollowsForUser(context.Background(), user.ID)
 
 	if err != nil {
 		return fmt.Errorf("error getting feeds from db: %w", err)

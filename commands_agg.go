@@ -33,8 +33,7 @@ func handlerAgg(s *state, cmd command) error {
 		feedUrl = cmd.arguments[0]
 	}
 
-	ctx := context.Background()
-	rssFeed, err := fetchFeed(ctx, feedUrl)
+	rssFeed, err := fetchFeed(context.Background(), feedUrl)
 	if err != nil {
 		return err
 	}

@@ -6,8 +6,7 @@ import (
 )
 
 func handlerFeeds(s *state, cmd command) error {
-	ctx := context.Background()
-	feeds, err := s.db.GetFeeds(ctx)
+	feeds, err := s.db.GetFeeds(context.Background())
 
 	if err != nil {
 		return fmt.Errorf("error getting feeds from db: %w", err)

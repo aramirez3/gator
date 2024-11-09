@@ -6,8 +6,7 @@ import (
 )
 
 func handlerUsers(s *state, cmd command) error {
-	ctx := context.Background()
-	users, err := s.db.GetUsers(ctx)
+	users, err := s.db.GetUsers(context.Background())
 
 	if err != nil {
 		return fmt.Errorf("error getting users from db: %w", err)

@@ -18,7 +18,7 @@ func handlerLogin(s *state, cmd command) error {
 
 	user, exists := userExists(s, name)
 	if !exists {
-		fmt.Println("user exists")
+		fmt.Println("user does not exist")
 		os.Exit(1)
 	}
 	s.config.SetUser(user)
@@ -27,11 +27,7 @@ func handlerLogin(s *state, cmd command) error {
 }
 
 func userExists(s *state, name string) (database.User, bool) {
-	ctx := context.Background()
-
-	fmt.Println("check for existing user")
-
-	user, _ := s.db.GetUser(ctx, name)
+	user, _ := s.db.GetUser(context.Background(), name)
 
 	if user.ID != uuid.Nil {
 		return user, true

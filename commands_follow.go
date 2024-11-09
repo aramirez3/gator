@@ -14,9 +14,8 @@ func handlerFollow(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("follow requires a feed url")
 	}
 
-	ctx := context.Background()
 	url := cmd.arguments[0]
-	feed, err := s.db.GetFeed(ctx, url)
+	feed, err := s.db.GetFeed(context.Background(), url)
 
 	if err != nil {
 		return err
@@ -31,8 +30,6 @@ func handlerFollow(s *state, cmd command, user database.User) error {
 }
 
 func addFeedFollowRow(s *state, userId uuid.UUID, feedId uuid.UUID) error {
-	ctx := context.Background()
-
 	params := database.CreateFeedFollowParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now(),
@@ -41,7 +38,7 @@ func addFeedFollowRow(s *state, userId uuid.UUID, feedId uuid.UUID) error {
 		FeedID:    feedId,
 	}
 
-	follow, err := s.db.CreateFeedFollow(ctx, params)
+	follow, err := s.db.CreateFeedFollow(context.Background(), params)
 	if err != nil {
 		return fmt.Errorf("error following feed: %w", err)
 	}

@@ -16,9 +16,7 @@ func handlerRegister(s *state, cmd command) error {
 	}
 	user := cmd.arguments[0]
 
-	ctx := context.Background()
-
-	existingUser, _ := s.db.GetUser(ctx, user)
+	existingUser, _ := s.db.GetUser(context.Background(), user)
 
 	if existingUser.ID != uuid.Nil {
 		os.Exit(1)
@@ -31,7 +29,7 @@ func handlerRegister(s *state, cmd command) error {
 		UpdatedAt: time.Now(),
 	}
 
-	dbUser, err := s.db.CreateUser(ctx, params)
+	dbUser, err := s.db.CreateUser(context.Background(), params)
 	if err != nil {
 		return fmt.Errorf("error creating user: %w", err)
 	}

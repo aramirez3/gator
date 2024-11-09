@@ -6,21 +6,19 @@ import (
 )
 
 func handlerReset(s *state, cmd command) error {
-	ctx := context.Background()
-
-	err := s.db.DeleteAllUsers(ctx)
+	err := s.db.DeleteAllUsers(context.Background())
 	if err != nil {
 		return fmt.Errorf("error deleting users from table: %w", err)
 	}
 	fmt.Println("users table is reset.")
 
-	err = s.db.DeleteAllFeeds(ctx)
+	err = s.db.DeleteAllFeeds(context.Background())
 	if err != nil {
 		return fmt.Errorf("error deleting feed from table: %w", err)
 	}
 	fmt.Println("feed table is reset.")
 
-	err = s.db.DeleteAllFeedFollows(ctx)
+	err = s.db.DeleteAllFeedFollows(context.Background())
 	if err != nil {
 		return fmt.Errorf("error deleting from feed_follows table: %w", err)
 	}

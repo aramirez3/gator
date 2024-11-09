@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"fmt"
 	"html"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/aramirez3/gator/internal/database"
 )
 
 type RSSFeed struct {
@@ -77,10 +80,24 @@ func unescapeFeed(rssFeed *RSSFeed) *RSSFeed {
 	return rssFeed
 }
 
-func scrapeFeeds(s *state, ttl time.Duration) error {
+func scrapeFeeds(s *state) error {
 	nextFeed, err := s.db.GetNextFeedToFetch(context.Background())
 	if err != nil {
 		return fmt.Errorf("error getting feed: %w", err)
 	}
 
+	sqlTime := sql.NullTime{
+		Time:  time.Now(),
+		Valid: true,
+	}
+
+	params := database.MarkFeedFetchedParams{
+		ID:            nextFeed.ID,
+		LastFetchedAt: sqlTime,
+	}
+	err = s.db.MarkFeedFetched(context.Background(), params)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -29,15 +29,26 @@ type RSSItem struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-func handlerAgg(s *state, cmd command) error {
+func handlerAgg(s *state, cmd command, durationString string) error {
 	if len(cmd.arguments) != 1 {
 		return fmt.Errorf("fetch requires a feedUrl")
 	}
-	err := scrapeFeeds(s)
+
+	timeBetweenRequests, err := time.ParseDuration(durationString)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid time string: %w", err)
 	}
-	return nil
+	fmt.Printf("Collecting feed every %s\n", durationString)
+	ticker := time.NewTicker(timeBetweenRequests)
+	for ; ; <-ticker.C {
+		fmt.Println("Run scrapeFeeds")
+		// err = scrapeFeeds(s)
+		// if err != nil {
+		// 	return err
+		// }
+		return nil
+	}
+
 }
 
 func fetchFeed(feedURL string) (*RSSFeed, error) {

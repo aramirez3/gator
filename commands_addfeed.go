@@ -46,5 +46,11 @@ func handlerAddfeed(s *state, cmd command) error {
 	fmt.Printf("    - UserID: %v\n", feed.UserID)
 	fmt.Printf("    - CreatedAt: %s\n", feed.CreatedAt.Format(time.RFC850))
 	fmt.Printf("    - UpdatedAt: %s\n", feed.UpdatedAt.Format(time.RFC850))
+
+	err = addFeedFollowRow(s, feed.ID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

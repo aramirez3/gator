@@ -2,7 +2,6 @@
 A blog aggreGATOR
 
 ## Requirements
-Here are the project requirements for running the program.
 
 ### Go Installation
 Install [Go](https://go.dev/doc/install).
@@ -14,8 +13,8 @@ Install [Postgres](https://www.postgresql.org/).
 Add `~/.gatorconfig.json` to your home directory and populate with db config settings:
 ```json
 {
-  "db_url": "connection_string_goes_here",
-  "current_user_name": "username_goes_here"
+  "db_url": "connection_string_goes_here", // connection string for postgres
+  "current_user_name": "username_goes_here" // gator will save the current user name
 }
 ```
 ## Install Gator Executable
@@ -27,45 +26,45 @@ go install
 ## Run
 From project root:
 ```bash
-gator <command> [args...]
+gator `command` [args...]
 ```
 
 ## Commands
-- register <user>
+- register `user`
   - Registers a new user
 ```bash
 gator register homer
 ```
 
-- login <user>
+- login `user`
   - Logs in as a registered user
 ```bash
 gator login bart
 ```
 
-- addfeed <url> <title>
+- addfeed `url` `title`
   - Adds & follows a feed
 ```bash
 gator addfeed https://hnrss.org/newest hackernews
 ```
 
-- agg <timestring>
+- agg `timestring`
   - Aggregates posts every given duration 
     - Valid time units are `"ns", "us" (or "µs"), "ms", "s", "m", "h"`
 ```bash
 gator agg 12h
 ```
-- browse <postsCount>
+- browse `postsCount`
   - Displays the latest `postCount` posts saved from your feeds, in descending order.
 ```bash
 gator browse 5
 ```
-- follow <feedUrl>
+- follow `feedUrl`
   - Follows an existing feed
 ```bash
 gator follow https://hnrss.org/newest
 ```
-- unfollow <feedUrl>
+- unfollow `feedUrl`
   - Unfollows an existing feed
 ```bash
 gator unfollow https://hnrss.org/newest

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/aramirez3/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -135,7 +136,22 @@ func scrapeFeed(s *state, feed database.Feed) error {
 
 	fmt.Printf("Fetching items for %s (%v posts found):\n", feedData.Channel.Title, len(feedData.Channel.Items))
 	for _, item := range feedData.Channel.Items {
-		fmt.Printf(" * %s\n", item.Title)
+		postPubDate, _ := time.Parse(time.Layout, item.PubDate)
+		params := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: postPubDate,
+			FeedID:      feed.ID,
+		}
+		_, err := s.db.CreatePost(context.Background(), params)
+		if err != nil {
+			fmt.Printf(" x error: %v\n", err)
+		}
+		fmt.Printf(" * added: %s\n", item.Title)
 	}
 	return nil
 }

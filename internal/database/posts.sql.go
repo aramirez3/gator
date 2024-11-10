@@ -73,7 +73,7 @@ func (q *Queries) DeleteAllPosts(ctx context.Context) error {
 }
 
 const getPostsForUser = `-- name: GetPostsForUser :many
-SELECT posts.id, posts.created_at, posts.updated_at, title, url, description, published_at, posts.feed_id, ff.id, ff.created_at, ff.updated_at, user_id, ff.feed_id from posts
+SELECT DISTINCT posts.id, posts.created_at, posts.updated_at, title, url, description, published_at, posts.feed_id, ff.id, ff.created_at, ff.updated_at, user_id, ff.feed_id from posts
 INNER JOIN feed_follows ff
     ON posts.feed_id = ff.feed_id
 WHERE ff.user_id = $1 

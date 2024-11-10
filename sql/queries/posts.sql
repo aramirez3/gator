@@ -13,7 +13,7 @@ VALUES($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING *;
 
 -- name: GetPostsForUser :many
-SELECT * from posts
+SELECT DISTINCT * from posts
 INNER JOIN feed_follows ff
     ON posts.feed_id = ff.feed_id
 WHERE ff.user_id = $1 

@@ -11,7 +11,7 @@ Install [Postgres](https://www.postgresql.org/).
 
 ### Config file
 Add `~/.gatorconfig.json` to your home directory and populate with db config settings:
-```json
+```js
 {
   "db_url": "connection_string_goes_here", // connection string for postgres
   "current_user_name": "username_goes_here" // gator will save the current user name

@@ -43,13 +43,8 @@ func handlerAgg(s *state, cmd command) error {
 	ticker := time.NewTicker(timeBetweenRequests)
 	for ; ; <-ticker.C {
 		fmt.Println("Run scrapeFeeds")
-		// err = scrapeFeeds(s)
-		// if err != nil {
-		// 	return err
-		// }
-		return nil
+		scrapeFeeds(s)
 	}
-
 }
 
 func fetchFeed(feedURL string) (*RSSFeed, error) {
@@ -90,31 +85,15 @@ func unescapeFeed(rssFeed *RSSFeed) *RSSFeed {
 	return rssFeed
 }
 
-func scrapeFeeds(s *state) error {
-	feed, err := getNextFeedToScrape(s)
-	if err != nil {
-		return err
-	}
-
-	rssFeed, err := fetchFeed(feed.Url)
-	if err != nil {
-		return err
-	}
-
-	fmt.Printf("Fetching items for %s\n", rssFeed.Channel.Title)
-	for _, item := range rssFeed.Channel.Items {
-		fmt.Println(item.Title)
-	}
-
-	return nil
-}
-
 func getNextFeedToScrape(s *state) (database.Feed, error) {
 	feed, err := s.db.GetNextFeedToFetch(context.Background())
 	if err != nil {
 		return database.Feed{}, fmt.Errorf("error getting feed: %w", err)
 	}
+	return feed, nil
+}
 
+func markFeedFetched(s *state, feed database.Feed) error {
 	sqlTime := sql.NullTime{
 		Time:  time.Now(),
 		Valid: true,
@@ -124,9 +103,39 @@ func getNextFeedToScrape(s *state) (database.Feed, error) {
 		ID:            feed.ID,
 		LastFetchedAt: sqlTime,
 	}
-	err = s.db.MarkFeedFetched(context.Background(), params)
+
+	err := s.db.MarkFeedFetched(context.Background(), params)
 	if err != nil {
-		return database.Feed{}, err
+		return err
 	}
-	return feed, nil
+	return nil
+}
+
+func scrapeFeeds(s *state) {
+	feed, err := getNextFeedToScrape(s)
+	if err != nil {
+		fmt.Printf("Could not find feed to scrape: %v", err)
+		return
+	}
+
+	fmt.Println("Found feed to scrape")
+	scrapeFeed(s, feed)
+}
+
+func scrapeFeed(s *state, feed database.Feed) error {
+	err := markFeedFetched(s, feed)
+	if err != nil {
+		return err
+	}
+
+	feedData, err := fetchFeed(feed.Url)
+	if err != nil {
+		return fmt.Errorf("could not retrieve feed data: %w", err)
+	}
+
+	fmt.Printf("Fetching items for %s (%v posts found):\n", feedData.Channel.Title, len(feedData.Channel.Items))
+	for _, item := range feedData.Channel.Items {
+		fmt.Printf(" * %s\n", item.Title)
+	}
+	return nil
 }

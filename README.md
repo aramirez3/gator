@@ -10,7 +10,7 @@ Install [Go](https://go.dev/doc/install).
 Install [Postgres](https://www.postgresql.org/).
 
 ### Config file
-Add `~/.gatorconfig.json` to your home directory and populate with db config settings:
+Add `~/.gatorconfig.json` to your home directory and populate with db config settings (remove comments before saving):
 ```js
 {
   "db_url": "connection_string_goes_here", // connection string for postgres

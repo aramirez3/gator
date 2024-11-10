@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html"
 	"strconv"
+	"time"
 
 	"github.com/aramirez3/gator/internal/database"
 )
@@ -36,7 +37,7 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 		post := escapePost(&post)
 		fmt.Printf("# %s\n", post.Title)
 		fmt.Printf("     - %s\n", post.Description)
-		fmt.Printf("     - Published %v\n", post.PublishedAt)
+		fmt.Printf("     - Published %v\n", post.PublishedAt.Format(time.DateOnly))
 		fmt.Printf("     - Url %v\n", post.Url)
 		fmt.Println("----------------------")
 	}

@@ -23,5 +23,9 @@ func handlerReset(s *state, cmd command) error {
 		return fmt.Errorf("error deleting from feed_follows table: %w", err)
 	}
 
+	err = s.db.DeleteAllPosts(context.Background())
+	if err != nil {
+		return fmt.Errorf("error deleting posts: %w", err)
+	}
 	return nil
 }

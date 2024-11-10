@@ -7,13 +7,7 @@ WITH inserted_feed_follows AS (
         updated_at,
         user_id,
         feed_id)
-    VALUES ( 
-        $1,
-        $2,
-        $3,
-        $4,
-        $5
-        )
+    VALUES ($1, $2, $3, $4, $5)
         RETURNING *
     )
 SELECT

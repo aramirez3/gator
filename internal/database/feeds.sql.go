@@ -22,14 +22,7 @@ INSERT INTO feeds (
     name,
     url,
     user_id)
-    values (
-    $1,
-    $2,
-    $3,
-    $4,
-    $5,
-    $6
-    )
+    values ( $1, $2, $3, $4, $5, $6)
     RETURNING id, created_at, updated_at, name, url, user_id, last_fetched_at
 `
 

@@ -24,7 +24,7 @@ go install
 ```
 
 ## Run
-From project root:
+🐊 is available in any directory!
 ```bash
 gator `command` [args...]
 ```
